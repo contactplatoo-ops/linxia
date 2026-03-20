@@ -7,6 +7,17 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Courier+Prime&display=swap" rel="stylesheet">
+
+<!-- MailerLite Universal -->
+<script>
+(function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+.push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);}
+(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml'));
+ml('account', '2209586');
+</script>
+<!-- End MailerLite Universal -->
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -107,7 +118,8 @@
     text-transform: uppercase;
   }
 
-  input {
+  input[type="text"],
+  input[type="email"] {
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--ink-faint);
@@ -122,12 +134,14 @@
     border-radius: 0;
   }
 
-  input::placeholder {
+  input[type="text"]::placeholder,
+  input[type="email"]::placeholder {
     color: var(--ink-faint);
     font-style: italic;
   }
 
-  input:focus {
+  input[type="text"]:focus,
+  input[type="email"]:focus {
     border-bottom-color: var(--ink);
   }
 
@@ -187,6 +201,9 @@
     display: block;
     text-transform: uppercase;
   }
+
+  /* Hide the Mailerlite form completely */
+  .ml-embedded { display: none !important; }
 </style>
 </head>
 <body>
@@ -217,6 +234,9 @@
     <button class="submit" onclick="handleSubmit()">Request access</button>
   </div>
 
+  <!-- Mailerlite hidden form -->
+  <div class="ml-embedded" data-form="eVa0no"></div>
+
   <div class="success" id="success">
     <p>Your request has been received.<br>If you are selected, you will know.</p>
     <span class="sig">— Linxia</span>
@@ -231,9 +251,21 @@
 
 <script>
   function handleSubmit() {
-    const name = document.getElementById('firstname').value.trim();
+    const firstName = document.getElementById('firstname').value.trim();
     const email = document.getElementById('email').value.trim();
-    if (!name || !email) return;
+    if (!firstName || !email) return;
+
+    // Find Mailerlite hidden form fields and fill them
+    const mlForm = document.querySelector('.ml-embedded form');
+    if (mlForm) {
+      const mlEmail = mlForm.querySelector('input[type="email"]');
+      const mlName = mlForm.querySelector('input[name*="name"], input[name*="first"]');
+      if (mlEmail) mlEmail.value = email;
+      if (mlName) mlName.value = firstName;
+      mlForm.submit();
+    }
+
+    // Show success message regardless
     document.getElementById('form').style.display = 'none';
     document.getElementById('success').style.display = 'block';
   }
